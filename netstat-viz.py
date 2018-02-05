@@ -9,6 +9,7 @@ import sys
 def checkcmdln():
   logging.debug("Run checkcmdln")
   if len(sys.argv) == 1:
+    logging.critical("No files found")
     print(f'Usage: {sys.argv[0]} mycsvfile1.csv mycsvfile2.csv ...')
     exit(0) 
 
@@ -17,12 +18,20 @@ def readmycsv(file):
   logging.info("Reading files " + ",".join(file))
   for f in file:
     reader = {}
-    reader = csv.DictReader(open(f, 'r'))
+    try:
+      reader = csv.DictReader(open(f, 'r'))
+    except:
+      logging.error("ERROR: opening file " + f)
+      continue  
     flow_list = []
     for flow in reader:
       logging.debug(flow)
       flow_list.append(flow)
-  return flow_list
+  try:
+    return flow_list
+  except:
+    logging.critical("No flows found!!")
+    exit(0)  
 
 def build_network(flow_list):
   logging.debug("Run build_network")
